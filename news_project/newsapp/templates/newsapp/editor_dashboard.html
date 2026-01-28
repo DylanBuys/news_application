@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+
+{% comment %} {% block title %}Editor Dashboard - NewsApp 2026{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[70vh] px-4">
+    <div class="text-center mb-12">
+        <h2 class="text-4xl font-extrabold text-slate-800 tracking-tight">Editor Command Center</h2>
+        <p class="text-gray-500 mt-2">Select an action to manage your news desk.</p>
+    </div> {% endcomment %}
+
+    <!-- Triple Action Button Grid -->
+    {% comment %} <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
+        
+        <!-- Workspace Button -->
+        <a href="{% url 'newsapp:workspace' %}" class="group flex flex-col items-center p-8 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:border-blue-500 transition-all transform hover:-translate-y-2 text-center">
+            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-600 group-hover:text-white transition">
+                <i class="fa-solid fa-briefcase text-2xl"></i>
+            </div>
+            <span class="text-xl font-bold text-slate-800">Open Workspace</span>
+            <p class="text-sm text-gray-400 mt-2">Manage ongoing drafts and active edits.</p>
+        </a>
+
+        <!-- Create Publication Button -->
+        <a href="{% url 'publishers:create_publication' %}" class="group flex flex-col items-center p-8 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:border-emerald-500 transition-all transform hover:-translate-y-2 text-center">
+            <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-4 group-hover:bg-emerald-600 group-hover:text-white transition">
+                <i class="fa-solid fa-plus text-2xl"></i>
+            </div>
+            <span class="text-xl font-bold text-slate-800">New Publication</span>
+            <p class="text-sm text-gray-400 mt-2">Start a new story or daily edition.</p>
+        </a>
+
+        <!-- Add Members Button -->
+        <a href="{% url 'publishers:send_invitation' %}" class="group flex flex-col items-center p-8 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:border-purple-500 transition-all transform hover:-translate-y-2 text-center">
+            <div class="w-16 h-16 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center mb-4 group-hover:bg-purple-600 group-hover:text-white transition">
+                <i class="fa-solid fa-user-plus text-2xl"></i>
+            </div>
+            <span class="text-xl font-bold text-slate-800">Manage Team</span>
+            <p class="text-sm text-gray-400 mt-2">Invite and add members to your desk.</p>
+        </a> {% endcomment %}
+        {% comment %} <nav>
+            <a href="{% url 'newsapp:workspace' %}">Open workspace</a>
+        </nav>
+        <nav>
+            <a href="{% url 'publishers:create_publication' %}" class="btn-norm"> Create publication</a>
+        </nav>
+
+        <nav>
+            <a href="{% url 'publishers:send_invitation' %}" class="btn-norm"> + manage team</a>
+        </nav>
+    </div>
+</div>
+
+{% endblock %} {% endcomment %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>{{ publisher.name }} Control Room</h1>
+    <p>Managing Editor: {{ request.user.username }}</p>
+</div>
+
+<div class="grid">
+    <section class="article-card">
+        <h3>Pending Articles ({{ pending_articles.count }})</h3>
+        {% for article in pending_articles %}
+            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                <strong>{{ article.title }}</strong> by {{ article.author.username }}
+                <br>
+                <small>Submitted: {{ article.created_at|date }}</small>
+                <div style="margin-top: 10px;">
+                    <a href="{% url 'article_approve' article.id %}" class="btn-publish" style="font-size: 0.8rem;">Review & Publish</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>No articles waiting for review.</p>
+        {% endfor %}
+    </section>
+
+    <section class="article-card">
+        <h3>Staff Directory</h3>
+        <ul>
+            {% for member in staff %}
+                <li>{{ member.username }} - <mark>{{ member.role|title }}</mark></li>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'send_invite' %}" class="secondary">Invite Journalist</a>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Newsletter List</h1>
+    <ul>
+        {% for newsletter in newsletters %}
+            <li><a href="{% url 'newsletters:newsletter_detail' newsletter.pk %}">{{ newsletter.title }}</a></li>
+        {% empty %}
+            <li>No newsletters available.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

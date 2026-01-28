@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Your Invitations</h2>
+
+{% if invitations %}
+    <ul>
+        {% for invite in invitations %}
+            <li>
+                <strong>{{ invite.publisher.name }}</strong>
+                — Role: {{ invite.role|title }}
+                <br>
+                <a href="{% url 'publishers:accept_invite' invite.token %}">
+                    Accept Invitation
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You don’t have any pending invitations.</p>
+{% endif %}
+
+{% endblock %}

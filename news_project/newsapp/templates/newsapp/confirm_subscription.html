@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.confirm-box {
+    max-width: 480px;
+    margin: 80px auto;
+    padding: 30px;
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.confirm-box h2 {
+    margin-bottom: 12px;
+}
+
+.confirm-box p {
+    color: #555;
+    margin-bottom: 24px;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-confirm {
+    background-color: #2563eb;
+    color: #fff;
+}
+
+.btn-confirm:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-cancel {
+    background-color: #e5e7eb;
+    color: #111;
+}
+</style>
+
+<div class="confirm-box">
+    <h2>Confirm subscription</h2>
+
+    {% if target_type == "journalist" %}
+        <p>Are you sure you want to subscribe to journalist <strong>{{ target.get_full_name|default:target.username }}</strong>?</p>
+    {% else %}
+        <p>Are you sure you want to subscribe to publisher <strong>{{ target.name }}</strong>?</p>
+    {% endif %}
+
+    <form method="post" action="{% url 'newsapp:subscribe' article.pk %}">
+        {% csrf_token %}
+        <button type="submit">Yes, subscribe</button>
+        <a href="{{ request.META.HTTP_REFERER }}">Cancel</a>
+    </form>
+</div>
+{% endblock %}

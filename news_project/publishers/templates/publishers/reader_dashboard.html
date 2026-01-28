@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.reader-dashboard {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.section {
+    margin-top: 40px;
+}
+
+.list-card {
+    border-bottom: 1px solid #eaeaea;
+    padding: 14px 0;
+}
+
+.list-title {
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+.list-meta {
+    color: #555;
+    font-size: 0.9rem;
+    margin: 4px 0 8px;
+}
+
+.btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-danger {
+    background-color: #ef4444;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: #2563eb;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+}
+</style>
+
+<div class="reader-dashboard">
+
+    <h1>My Subscriptions</h1>
+
+    <!-- ===== JOURNALISTS ===== -->
+    <div class="section">
+        <h2>Independent Journalists</h2>
+
+        {% if subscribed_journalists %}
+            {% for journalist in subscribed_journalists %}
+                <div class="list-card">
+                    <div class="list-title">{{ journalist.get_full_name|default:journalist.username }}</div>
+
+                    <div class="list-meta">
+                        Independent Journalist
+                    </div>
+
+                    <form method="post"
+                          action="{% url 'newsapp:unsub_to_journalist' journalist.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            Unsubscribe
+                        </button>
+                    </form> 
+                    {% comment %} <form method="post" action="{% url 'newsapp:subscribe' %}">
+                        {% csrf_token %}
+                        <label for="address">To:</label>
+                        <input id="address" type="email" name="address"/>
+                    
+                        <label for="subject">Subject:</label>
+                        <input id="subject" name="subject"/>
+                    
+                        <label for="message">Message:</label><br>
+                        <textarea id="message" name="message"></textarea>
+
+                        <input type="submit"  href="{% url 'newsapp:subscribe' %}">
+                    </form>
+                    <p>{{ result }}</p> {% endcomment %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>You are not subscribed to any journalists.</p>
+        {% endif %}
+    </div>
+
+    <!-- ===== PUBLICATIONS ===== -->
+    <div class="section">
+        <h2>Publications</h2>
+
+        {% if subscribed_publishers %}
+            {% for publisher in subscribed_publishers %}
+                <div class="list-card">
+                    <div class="list-title">{{ publisher.name }}</div>
+
+                    <div class="list-meta">
+                        Publication
+                    </div>
+
+                    <form method="post"
+                          action="{% url 'newsapp:unsub_to_publisher' publisher.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            Unsubscribe
+                        </button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>You are not subscribed to any publications.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

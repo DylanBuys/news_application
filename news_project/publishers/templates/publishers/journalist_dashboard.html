@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+
+<style>
+    /* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    margin: 0.5rem 0.5rem 1rem 0;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #fff;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.btn-primary {
+    background-color: #1d4ed8; /* blue */
+}
+
+.btn-primary:hover {
+    background-color: #2563eb;
+    transform: scale(1.05);
+}
+
+.btn-secondary {
+    background-color: #9333ea; /* purple */
+}
+
+.btn-secondary:hover {
+    background-color: #a855f7;
+    transform: scale(1.05);
+}
+
+/* List of user's articles/newsletters */
+.user-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.item-card {
+    background: #f3f4f6; /* light gray */
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.5rem;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.item-card a {
+    text-decoration: none;
+    color: #111827; /* dark gray */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item-card:hover {
+    background: #e5e7eb; /* slightly darker gray */
+    transform: translateY(-2px);
+}
+
+.status {
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    background-color: #d1d5db; /* gray tag */
+    color: #374151;
+}
+
+/* Empty messages */
+.empty-message {
+    font-style: italic;
+    color: #6b7280; /* gray text */
+    margin-top: 0.5rem;
+}
+</style>
+
+{% block content %}
+<h2>Journalist Dashboard</h2>
+
+{% if publishers %}
+    <!-- EXISTING PUBLISHER VIEW -->
+    <p>You are part of the following publication(s):</p>
+    <ul>
+        {% for publisher in publishers %}
+            <li>{{ publisher.name }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>My Articles</h3>
+
+    <a href="{% url 'newsapp:create_article' %}" class="primary">
+    ✍️ Create Article
+    </a>
+    <a href="{% url 'newsapp:newsletter_create' %}" class="primary">
+    ✍️ Create Newsletter
+    </a>
+
+    
+    {% if my_articles %}
+        {% for article in my_articles %}
+            <li>
+                <a href="{% url 'newsapp:article_detail' article.pk %}">
+                    {{ article.title }} — {{ article.status|title }}
+                </a>
+            </li>
+        {% endfor %}
+    {% else %}
+        <p>You haven’t submitted any articles yet.</p>
+    {% endif %}
+
+    {% if my_newsletters %}
+        {% for newsletter in my_newsletters %}
+            <li>
+                <a href="{% url 'newsapp:newsletter_detail' newsletter.pk %}">
+                    {{ newsletter.title }} — {{ newsletter.status|title }}
+                </a>
+            </li>
+        {% endfor %}
+    {% else %}
+        <p>You haven’t submitted any articles yet.</p>
+    {% endif %}
+    
+
+{% else %}
+    <!-- 🆕 INDEPENDENT JOURNALIST VIEW -->
+    <section class="card">
+        <h3>You’re an Independent Journalist</h3>
+        <p>
+            You’re not part of a publication yet — but you can still write,
+            publish independently, or join a newsroom.
+        </p>
+    </section>
+
+    <section class="card-grid">
+        <div class="card">
+            <h4>✍️ Write an Independent Article</h4>
+            <p>
+                Publish articles under your own byline while remaining
+                independent.
+            </p>
+            <a href="{% url 'newsapp:create_article' %}" class="primary">
+            ✍️ Create Article
+            </a>
+            {% if my_articles %}
+        {% for article in my_articles %}
+            <li>
+                <a href="{% url 'newsapp:article_detail' article.pk %}">
+                    {{ article.title }} — {{ article.status|title }}
+                </a>
+            </li>
+        {% endfor %}
+    {% else %}
+        <p>You haven’t submitted any articles yet.</p>
+    {% endif %}
+
+    {% if my_newsletters %}
+        {% for newsletter in my_newsletters %}
+            <li>
+                <a href="{% url 'newsapp:newsletter_detail' newsletter.pk %}">
+                    {{ newsletter.title }} — {{ newsletter.status|title }}
+                </a>
+            </li>
+        {% endfor %}
+    {% else %}
+        <p>You haven’t submitted any articles yet.</p>
+    {% endif %}
+        </div>
+
+        <div class="card">
+            <h4>🏢 Join a Publication</h4>
+            <p>
+                Request access to an existing newsroom or accept an invitation
+                Accept an invitation from an editor.
+            </p>
+            <a href="{% url 'publishers:request_join' %}" class="secondary">
+                Request to Join
+            </a>
+            <br><br>
+            <a href="{% url 'publishers:view_invitations' %}">
+                View Invitations
+            </a>
+        </div>
+    </section>
+{% endif %}
+
+{% endblock %} 

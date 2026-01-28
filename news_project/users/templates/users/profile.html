@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% comment %} {% extends 'base.html' %}
+
+{% block content %}
+    <h1>User Profile</h1>
+    <p>Username: {{ user.username }}</p>
+    <p>Email: {{ user.email }}</p>
+
+    <h2>Subscriptions:</h2>
+
+    <h2>Subscribed Publishers</h2>
+    <ul>
+        {% for publisher in user.subscribed_publishers.all %}
+            <li>{{ publisher.name }} - <a href="{{ publisher.website }}">{{ publisher.website }}</a></li>
+        {% empty %}
+            <li>No subscribed publishers.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Subscribed Journalists</h2>
+    <ul>
+        {% for journalist in user.subscribed_journalists.all %}
+            <li>{{ journalist.username }} - {{ journalist.email }}</li>
+        {% empty %}
+            <li>No subscribed journalists.</li>
+        {% endfor %}
+
+        {% if user.role == 'journalist' %}
+        <h2>My Projects</h2>
+        <ul>
+            {% for article in user.articles.all %}
+                <li>{{ article.title }} - <a href="{{ article.url }}">{{ article.url }}</a></li>
+                <li>{{ newsletter.title }} - <a href="{{ newsletter.url }}">{{ newsletter.url }}</a></li>
+            {% empty %}
+                <li>you have not started any projects yet.</li>
+                <li> New project - <a href="{% url 'newsapp:article_create' %}">Create Article</a> | <a href="{% url 'newsapp:newsletter_create' %}">Create Newsletter</a></li>
+
+            {% endfor %}
+            
+        </ul>
+        {% endif %}
+    </ul>
+{% endblock %} {% endcomment %}
+
+
+{% block content %}
+    <h1>User Profile</h1>
+    <p>Username: {{ user.username }}</p>
+    <p>Email: {{ user.email }}</p>
+    <p>Role: {{ user.role|title }}</p>
+
+    {% if user.role == 'journalist' or user.role == 'editor' %}
+    <h2>Publisher Affiliation</h2>
+    <form method="post" action="{% url 'newsapp:join_publisher' %}">
+        {% csrf_token %}
+        <label for="publisher_select">Join a Publisher:</label>
+        <select name="publisher_id" id="publisher_select">
+            <option value="">-- Select a Publisher --</option>
+            {% for publisher in all_publishers %}
+                <option value="{{ publisher.id }}">{{ publisher.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Register/Join</button>
+    </form>
+    {% endif %}
+
+    <hr>
+
+    <h2>Subscriptions:</h2>
+    <h3>Subscribed Publishers</h3>
+    <ul>
+        {% for publisher in user.subscribed_publishers.all %}
+            <li>{{ publisher.name }} - <a href="{{ publisher.website }}">{{ publisher.website }}</a></li>
+        {% empty %}
+            <li>No subscribed publishers.</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Subscribed Journalists</h3>
+    <ul>
+        {% for journalist in user.subscribed_journalists.all %}
+            <li>{{ journalist.username }} - {{ journalist.email }}</li>
+        {% empty %}
+            <li>No subscribed journalists.</li>
+        {% endfor %}
+    </ul>
+
+    {% if user.role == 'journalist' %}
+    <h2>My Projects</h2>
+    <ul>
+        {% for article in user.articles.all %}
+            <li>Article: {{ article.title }} - <a href="{{ article.url }}">View</a></li>
+        {% empty %}
+            <li>You have not started any projects yet.</li>
+        {% endfor %}
+        
+        <li style="list-style: none; margin-top: 10px;">
+            <strong>New project:</strong> 
+            <a href="{% url 'newsapp:article_create' %}">Create Article</a> | 
+            <a href="{% url 'newsapp:newsletter_create' %}">Create Newsletter</a>
+        </li>
+    </ul>
+    {% endif %}
+
+{% endblock %}

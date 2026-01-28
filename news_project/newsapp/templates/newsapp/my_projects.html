@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>My Projects</h1>
+
+    <ul>
+        {% with all_projects=my_projects.articles|add:my_projects.newsletters %}
+            {% for project in all_projects %}
+                <li>
+                    {% if project.type == 'article' %}
+                        <strong>Article:</strong> {{ project.title }} - <a href="{{ project.url }}">{{ project.url }}</a>
+                    {% elif project.type == 'newsletter' %}
+                        <strong>Newsletter:</strong> {{ project.title }} - <a href="{{ project.url }}">{{ project.url }}</a>
+                    {% endif %}
+                    {% if user.role == 'editor' and project.publisher == user.publisher %}
+                        <!-- Editor options -->
+                        <a href="{% url 'newsapp:edit_project' project.id %}">Edit</a>
+                        <a href="{% url 'newsapp:approve_project' project.id %}">Approve</a>
+                    {% endif %}
+                </li>
+            {% empty %}
+                <li>You have not created any articles or newsletters.</li>
+            {% endfor %}
+        {% endwith %}
+    </ul>
+
+    {% if user.role != 'editor' %}
+        <form method="post" action="{% url 'newsapp:create_project' %}">
+            {% csrf_token %}
+            <button type="submit">Create New Project</button>
+        </form>
+    {% endif %}
+{% endblock %}

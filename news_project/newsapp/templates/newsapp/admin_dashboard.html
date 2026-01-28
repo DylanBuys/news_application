@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Admin Dashboard</h1>
+    <p>Welcome, {{ user.username }}!</p>
+    <p>Email: {{ user.email }}</p>
+    <p>Role: {{ user.role|title }}</p>
+
+    <h2>All Users</h2>
+    <ul>
+        {% for u in all_users %}
+            <li>{{ u.username }} - {{ u.email }} - {{ u.role|title }}</li>
+        {% empty %}
+            <li>No users found.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>All Publishers</h2>
+    <ul>
+        {% for publisher in all_publishers %}
+            <li>{{ publisher.name }} - <a href="{{ publisher.website }}">{{ publisher.website }}</a></li>
+        {% empty %}
+            <li>No publishers found.</li>
+        {% endfor %}
+        <li>Create new publisher - <a href="{% url 'publishers:create_publisher' %}">Create Publisher</a></li>
+    </ul>
+{% endblock %}

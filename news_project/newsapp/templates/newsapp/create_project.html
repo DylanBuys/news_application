@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Create a New Project</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_project_type">Select Project Type:</label>
+        <select name="project_type" id="id_project_type">
+            <option value="article">Article</option>
+            <option value="newsletter">Newsletter</option>
+        </select>
+        <button type="submit">Create</button>
+    </form>
+{% endblock %}

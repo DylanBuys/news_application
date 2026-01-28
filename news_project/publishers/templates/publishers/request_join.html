@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Request to Join a Publication</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <label for="publisher">Choose a publication:</label>
+    <select name="publisher_id" required>
+        {% for publisher in publishers %}
+            <option value="{{ publisher.id }}">
+                {{ publisher.name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Send Request</button>
+</form>
+{% endblock %}

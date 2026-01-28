@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>index</title>
+</head>
+<body>
+    <h1>Latest News</h1>
+    <h2>Articles</h2>
+    <ul>
+        {% for article in articles %}
+            <li><a href="{% url 'articles:article_detail' article.pk %}">{{ article.title }}</a></li>
+        {% empty %}
+            <li>No articles available.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Newsletters</h2>
+    <ul>
+        {% for newsletter in newsletters %}
+            <li><a href="{% url 'newsletters:newsletter_detail' newsletter.pk %}">{{ newsletter.title }}</a></li>
+        {% empty %}
+            <li>No newsletters available.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

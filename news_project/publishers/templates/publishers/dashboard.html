@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>{{ publisher.name }} Control Room</h1>
+    <p>Managing Editor: {{ request.user.username }}</p>
+</div>
+
+{% if request.user.owned_publisher %}
+
+<p>Publisher: {{ publisher }}</p>
+<p>Publisher PK: {{ publisher.pk }}</p>
+<div class="grid">
+    <section class="article-card">
+        <h3>Pending Articles ({{ pending_articles.count }})</h3>
+        {% for article in pending_articles %}
+            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                <strong>{{ article.title }}</strong> by {{ article.author.username }}
+                <br>
+                <small>Submitted: {{ article.created_at|date }}</small>
+                <div style="margin-top: 10px;">
+                    <a href="{% url 'newsapp:article_update' article.id %}" class="btn-publish" style="font-size: 0.8rem;">Review Article</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>No articles waiting for review.</p>
+        {% endfor %}
+    </section>
+
+    <section class="article-card">
+        <h3>Staff Directory</h3>
+        <ul>
+            {% for member in staff %}
+            {% comment %} {% for members in members %} {% endcomment %}
+                <li>{{ member.username }} - <mark>{{ member.role|title }}</mark></li>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'publishers:send_invite' publisher.pk %}" class="secondary">Invite Journalist or Editor</a>
+    </section>
+</div>
+
+{% elif request.user.joined_publishers.all.exists %}
+<div class="grid">
+    <section class="article-card">
+        <h3>Pending Articles ({{ pending_articles.count }})</h3>
+        {% for article in pending_articles %}
+            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                <strong>{{ article.title }}</strong> by {{ article.author.username }}
+                <br>
+                <small>Submitted: {{ article.created_at|date }}</small>
+                <div style="margin-top: 10px;">
+                    <a href="{% url 'newsapp:approve_article' article.id %}" class="btn-publish" style="font-size: 0.8rem;">Review & Publish</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>No articles waiting for review.</p>
+        {% endfor %}
+    </section>
+</div>
+
+<div class="grid">
+    <section class="article-card">
+        <h3>Join Requests ({{ pending_articles.count }})</h3>
+        {% for article in pending_articles %}
+            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                <strong>{{ article.title }}</strong> by {{ article.author.username }}
+                <br>
+                <small>Submitted: {{ article.created_at|date }}</small>
+                <div style="margin-top: 10px;">
+                    <a href="{% url 'newsapp:approve_article' article.id %}" class="btn-publish" style="font-size: 0.8rem;">Review & Publish</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>No articles waiting for review.</p>
+        {% endfor %}
+    </section>
+</div>
+
+{% else %}
+
+<div class="grid">
+    <section class="article-card">
+        <h3>Get Started</h3>
+        <div style="padding: 20px 0; text-align: center;">
+            <p>You aren't associated with a publication room yet.</p>
+            
+            <!-- Option 1: Create (For Editors/Owners) -->
+            <div style="border-bottom: 1px solid #eee; padding: 20px 0;">
+                <strong>Launch your own Brand</strong>
+                <br>
+                <small>Start a new publication and manage your own team.</small>
+                <div style="margin-top: 15px;">
+                    <a href="{% url 'publishers:create_publication' %}" class="btn-publish" style="font-size: 0.9rem; text-decoration: none;">Create Publication</a>
+                </div>
+            </div>
+
+            <!-- Option 2: Join (For Staff/Collaborators) -->
+            <div style="padding: 20px 0;">
+                <strong>Join an existing Team</strong>
+                <br>
+                <small>Check your email for an invitation link from your editor.</small>
+                <div style="margin-top: 15px;">
+                    <a href="{% url 'publishers:view_invitations' %}" class="btn-publish" style="font-size: 0.9rem; background-color: #6c757d; text-decoration: none;">View Invitations</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endif %}
+
+{% endblock %}

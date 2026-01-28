@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.article-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.article-meta {
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.article-actions {
+    margin-top: 20px;
+}
+
+.article-actions h3 {
+    margin-bottom: 10px;
+}
+
+.article-actions a,
+.article-actions button {
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+button {
+    padding: 6px 12px;
+    cursor: pointer;
+}
+</style>
+
+<div class="article-container">
+
+    <h1>{{ article.title }}</h1>
+
+    <p class="article-meta">
+        <strong>Author:</strong> {{ article.journalist }}
+    </p>
+
+    <p class="article-meta">
+        <strong>Status:</strong>
+        {% if article.approved %}
+            Published
+        {% else %}
+            Draft / Pending
+        {% endif %}
+    </p>
+
+    <hr>
+
+    <p>{{ article.content }}</p>
+
+    <hr>
+
+    {# ===== JOURNALIST ACTIONS ===== #}
+    {% if user.role == "journalist" and article.author == user %}
+        <div class="article-actions">
+            <h3>Journalist Actions</h3>
+
+            <a href="{% url 'newsapp:article_update' article.pk %}">
+                <button>Edit Article</button>
+            </a>
+
+            <a href="{% url 'newsapp:article_delete' article.pk %}">
+                <button>Delete Article</button>
+            </a>
+        </div>
+    {% endif %}
+
+    {# ===== EDITOR ACTIONS ===== #}
+    {% if user.role == "editor" and article.publisher and user.publisher == article.publisher %}
+        <div class="article-actions">
+            <h3>Editor Actions</h3>
+
+            <a href="{% url 'newsapp:article_update' article.pk %}">
+                <button>Edit Article</button>
+            </a>
+
+            <a href="{% url 'newsapp:article_delete' article.pk %}">
+                <button>Delete Article</button>
+            </a>
+
+            {% if not article.approved %}
+                <form method="post" action="{% url 'newsapp:approve_article' article.pk %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Publish Article</button>
+                </form>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {# ===== READERS: READ-ONLY (NO ACTIONS) ===== #}
+    {% if user.role == "reader" %}
+        <div class="article-actions">
+            <form method="post" action="{% url 'newsapp:subscribe' article.pk %}">
+                {% csrf_token %}
+                <button type="submit">Subscribe</button>
+            </form>
+        </div>
+    {% endif %}
+    <a href="{% url 'newsapp:article_list' %}">
+        <button type="button">Back to Articles</button>
+    </a>
+
+{% endblock %}

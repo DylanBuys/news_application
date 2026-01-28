@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home | News App{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold">Latest News</h1>
+        <div class="d-flex gap-2">
+            <!-- Journalist: Create Article & Newsletter -->
+            {% if user.is_authenticated and user.role == 'journalist' %}
+                <a href="{% url 'articles:article_create' %}" class="btn btn-primary">+ Create Article</a>
+                <a href="{% url 'newsletters:newsletter_create' %}" class="btn btn-outline-primary">+ Create Newsletter</a>
+            {% endif %}
+            <!-- Profile Button -->
+            <a href="{% url 'users:profile' %}" class="btn btn-light border shadow-sm">
+                Profile
+            </a>
+        </div>
+    </div>
+
+    <!-- News Feed -->
+    <div class="row">
+        {% for item in content_list %}
+            {# Readers: Only see approved. Editors/Journalists: See all. #}
+            {% if item.is_approved %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body">
+                            <span class="badge {% if item.is_approved %}bg-success{% else %}bg-warning{% endif %}">
+                                {% if item.is_approved %}Approved{% else %}Pending{% endif %}
+                            </span>
+                            <h3>{{ item.title }}</h3>
+                            <p>{{ item.summary|truncatewords:30 }}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span>
+                                    by <b>{{ item.author.get_full_name }}</b>
+                                    {% if item.publisher %}
+                                        | <b>{{ item.publisher.name }}</b>
+                                    {% endif %}
+                                </span>
+                                <div>
+                                    <!-- Reader: Subscribe buttons -->
+                                    {% if user.is_authenticated and user.role == 'reader' %}
+                                        <form method="post" action="{% url 'users:sub_to_journalist' item.author.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">Subscribe to Journalist</button>
+                                        </form>
+                                        {% if item.publisher %}
+                                            <form method="post" action="{% url 'users:sub_to_publisher' item.publisher.id %}" style="display:inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary">Subscribe to Publisher</button>
+                                            </form>
+                                        {% endif %}
+                                    {% endif %}
+                                    <!-- Editor: Edit button -->
+                                    {% if user.is_authenticated and user.role == 'editor' %}
+                                        <a href="{% url 'articles:article_edit' item.id %}" class="btn btn-sm btn-warning">Edit</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% empty %}
+            <p class="text-center text-muted">No articles or newsletters found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

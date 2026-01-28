@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Create a New Publication - NewsApp{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg mt-10">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">Create New Publication</h2>
+    
+    <form method="post" action=".">
+        {% csrf_token %}
+        
+        <!-- Display non-field errors if any exist -->
+        {% if form.errors %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <span class="block sm:inline">Please correct the errors below.</span>
+                <ul>
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <!-- Render the form fields as paragraphs (Django shortcut) -->
+        <!-- This handles the label, input field, and individual field errors automatically -->
+        {% for field in form %}
+            <div class="mb-5">
+                <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                    {{ field.label }}
+                </label>
+                <!-- Add Tailwind CSS classes for better styling of inputs -->
+                {{ field }}
+                {% if field.help_text %}
+                    <p class="mt-1 text-xs text-gray-500">{{ field.help_text }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <!-- Submit Button -->
+        <div class="flex justify-end mt-6">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-150 ease-in-out shadow-md">
+                Save Publisher
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
