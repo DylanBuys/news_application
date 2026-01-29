@@ -97,6 +97,12 @@ def article_list(request):
 
 @login_required
 def article_detail(request, pk):
+    '''
+    View to display details of a specific article.
+    :param request: HTTP request object.
+    :param pk: Primary key of the article.
+    :return: Rendered template with details of the specified article.
+    '''
     article = get_object_or_404(Article, pk=pk)
     context = {
         "article": article
