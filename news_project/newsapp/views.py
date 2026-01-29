@@ -40,6 +40,11 @@ def announce_article_on_x(article_id):
 
 @login_required
 def create_article(request):
+    '''
+    View to create a new article.
+    :param request: HTTP request object.
+    :return: Rendered template for creating a new article.
+    '''
     if request.method == "POST":
         form = ArticleForm(request.POST, user=request.user)
         if form.is_valid():
@@ -69,65 +74,15 @@ def create_article(request):
 
     return render(request, "articles/article_form.html", {"form": form})
 
-# from django.contrib.auth.decorators import login_required
-# from django.core.mail import send_mail
-# from django.conf import settings
-# from django.shortcuts import render, redirect
-
-# @login_required
-# def create_article(request):
-#     if request.method == "POST":
-#         form = ArticleForm(request.POST, user=request.user)
-#         if form.is_valid():
-#             article = form.save(commit=False)
-#             article.author = request.user
-
-#             # Check if the user belongs to any publishers
-#             publishers = request.user.joined_publishers.all()
-#             if publishers.exists():
-#                 article.publisher = publishers.first()
-#             else:
-#                 article.publisher = None
-
-#             # Safe defaults
-#             article.status = "pending"
-#             article.is_approved = False
-
-#             article.save()
-#             article.independent_author.add(request.user)
-
-#             # --- SEND EMAILS TO SUBSCRIBERS ---
-#             if article.publisher:
-#                 subscribers = article.publisher.subscribed_users.all()
-#                 subject = f"New Article from {article.publisher.name}"
-#             else:
-#                 subscribers = article.independent_author.all()
-#                 subject = f"New Article from {request.user.username}"
-
-#             message = f"Hi there!\n\nA new article has been published: {article.title}\nCheck it out at: http://yourdomain.com/articles/{article.pk}"
-
-#             for user in subscribers:
-#                 if user.email:
-#                     try:
-#                         send_mail(
-#                             subject,
-#                             message,
-#                             settings.EMAIL_HOST_USER,
-#                             [user.email],
-#                         )
-#                     except Exception as e:
-#                         print(f"Error sending email to {user.email}: {e}")
-
-#             return redirect("newsapp:article_list")
-#     else:
-#         form = ArticleForm(user=request.user)
-
-#     return render(request, "articles/article_form.html", {"form": form})
-
 
 @login_required
 def article_list(request):
-    # view to display a list of articles
+    '''
+    This view will display a list of articles/newsletters
+
+        :param request: HTTP object
+        :return: Rendered template with a list of articles/newsletters
+    '''
     articles = Article.objects.filter(is_approved=True)
     newsletters = Newsletter.objects.filter(is_approved=True)
 
