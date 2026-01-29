@@ -1,5 +1,5 @@
-import pymysql
-pymysql.version_info = (2, 2, 7, "final", 0)
+# import pymysql
+# pymysql.version_info = (2, 2, 7, "final", 0)
 
 """
 Django settings for news_app project.
