@@ -77,7 +77,7 @@ def create_article(request):
 
 @login_required
 def article_list(request):
-    '''
+     '''
     This view will display a list of articles/newsletters
 
         :param request: HTTP object
