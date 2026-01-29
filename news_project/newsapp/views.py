@@ -127,7 +127,12 @@ def create_article(request):
 
 @login_required
 def article_list(request):
-    # view to display a list of articles
+     '''
+    This view will display a list of articles/newsletters
+
+        :param request: HTTP object
+        :return: Rendered template with a list of articles/newsletters
+    '''
     articles = Article.objects.filter(is_approved=True)
     newsletters = Newsletter.objects.filter(is_approved=True)
 
