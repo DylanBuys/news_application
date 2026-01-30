@@ -24,9 +24,9 @@ docker build -t newsapp .
 
 Run the Docker Container
 Mac / Linux:
-docker run -p 8000:8000 --name newsapp_container newsapp:latest
+docker run -p 8000:8000 --name newsapp_container newsapp
 Windows (PowerShell / CMD):
-docker run -p 8000:8000 --name newsapp_container newsapp:latest
+docker run -p 8000:8000 --name newsapp_container newsapp
 Access the application at http://localhost:8000
 
 Stop and Remove the Container
