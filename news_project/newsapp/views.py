@@ -18,6 +18,12 @@ from .serializers import ArticleSerializer
 
 
 def announce_article_on_x(article_id):
+    '''
+    View to announce an article on X (formerly Twitter).
+
+    :param article_id: ID of the article to be announced.
+    :return: None. Posts a text-only announcement to X if the article exists.
+    '''
     # Validating the article object.
     try:
         article = Article.objects.select_related().get(id=article_id)
@@ -77,7 +83,7 @@ def create_article(request):
 
 @login_required
 def article_list(request):
-     '''
+    '''
     This view will display a list of articles/newsletters
 
         :param request: HTTP object
@@ -146,38 +152,13 @@ def article_delete(request, pk):
 
 
 @login_required
-def newsletter_createf(request):
-    if request.method == "POST":
-        form = NewsletterForm(request.POST, user=request.user)
-        if form.is_valid():
-            newsletter = form.save(commit=False)
-
-            # Always set the author
-            newsletter.author = request.user
-
-            # Attach publication if the journalist belongs to one
-            publishers = request.user.joined_publishers.all()
-            if publishers.exists():
-                newsletter.publisher = publishers.first()
-            else:
-                # Independent journalist
-                newsletter.publisher = None
-                newsletter.independent_author = request.user
-
-            # Force safe defaults
-            newsletter.status = "PENDING REVIEW"        # Never published automatically
-            newsletter.is_approved = False     # Never approved automatically
-
-            newsletter.save()
-            return redirect("newsapp:article_list")
-    else:
-        form = NewsletterForm(user=request.user)
-
-    return render(request, "newsletter/newsletter_form.html", {"form": form})
-
-
-@login_required
 def newsletter_create(request):
+    '''
+    View to create a new newsletter.
+    :param request: HTTP request object.
+    :param pk: Primary key of the newsletter.
+    :return: Redirect to the article list after creation.
+    '''
     if request.method == "POST":
         form = NewsletterForm(request.POST, user=request.user)
         if form.is_valid():
@@ -205,6 +186,12 @@ def newsletter_create(request):
 
 
 def newsletter_list(request):
+    '''
+    This view will display a list of articles/newsletters
+
+        :param request: HTTP object
+        :return: Rendered template with a list of articles/newsletters
+    '''
     if request.user.role == 'reader':
         newsletters = Newsletter.objects.filter(is_approved=True)
     else:
@@ -221,6 +208,12 @@ def newsletter_list(request):
 @login_required
 @user_passes_test(lambda u: u.role == 'editor')
 def newsletter_update(request, pk):
+    '''
+    View to update an existing newsletter.
+    :param request: HTTP request object.
+    :param pk: Primary key of the newsletter to be updated.
+    :return: Rendered template for updating the specified newsletter.
+    '''
     newsletter = get_object_or_404(Newsletter, pk=pk)
     if request.method == 'POST':
         form = NewsletterForm(request.POST, instance=newsletter)
@@ -238,12 +231,24 @@ def newsletter_update(request, pk):
 @login_required
 @user_passes_test(lambda u: u.role == 'editor')
 def newsletter_delete(request, pk):
+    '''
+    View to delete an existing newsletter.
+    :param request: HTTP request object.
+    :param pk: Primary key of the newsletter to be deleted.
+    :return: Redirect to the newslleter list after deletion.
+    '''
     newsletter = get_object_or_404(Newsletter, pk=pk)
     newsletter.delete()
     return redirect("newsletters: newsletter_list")
 
 
 def newsletter_detail(request, pk):
+    '''
+    View to display details of a specific newsletter.
+    :param request: HTTP request object.
+    :param pk: Primary key of the newsletter.
+    :return: Rendered template with details of the specified newsletter.
+    '''
     newsletter = get_object_or_404(Newsletter, pk=pk)
     context = {
         "newsletter": newsletter
@@ -252,6 +257,12 @@ def newsletter_detail(request, pk):
 
 
 def approve_newsletter(request, pk):
+    '''
+    View to display approve a specific newsletter.
+    :param request: HTTP request object.
+    :param pk: Primary key of the newsletter.
+    :return: Redirect to newsletter_list.
+    '''
     newsletter = get_object_or_404(Newsletter, pk=pk)
     if request.user.role == 'editor':
         newsletter.is_approved = True
@@ -260,6 +271,12 @@ def approve_newsletter(request, pk):
 
 
 def reject_newsletter(request, pk):
+    '''
+    View to display reject a specific newsletter.
+    :param request: HTTP request object.
+    :param pk: Primary key of the newsletter.
+    :return: Redirect to newsletter_list.
+    '''
     newsletter = get_object_or_404(Newsletter, pk=pk)
     if request.user.role == 'editor':
         newsletter.is_approved = False
@@ -268,6 +285,12 @@ def reject_newsletter(request, pk):
 
 
 def approve_article(request, pk):
+    '''
+    View to display approve a specific article.
+    :param request: HTTP request object.
+    :param pk: Primary key of the article.
+    :return: Redirect to article_list.
+    '''
     article = get_object_or_404(Article, pk=pk)
     if request.user.role == 'editor':
         article.is_approved = True
@@ -277,55 +300,14 @@ def approve_article(request, pk):
 
 
 @login_required
-def index(request):
-    articles = Article.objects.filter(is_approved=True).order_by('-id')[:5]
-    newsletters = Newsletter.objects.filter(is_approved=True).order_by('-id')[:5]
-
-    context = {
-        "articles": articles,
-        "newsletters": newsletters,
-        "page_title": "Latest News",
-        "user_role": request.user.role,
-        "user_subscribed_publishers": request.user.subscribed_publishers.all(),
-        "user_subscribed_journalists": request.user.subscribed_journalists.all(),
-    }
-    return render(request, 'newsapp/index.html', context)
-
-
-def my_projects(request):
-    articles = Article.objects.filter(is_approved=True).order_by('-id')[:5]
-    newsletters = Newsletter.objects.filter(is_approved=True).order_by('-id')[:5]
-
-    my_projects = {
-        "articles": Article.objects.filter(journalist=request.user),
-        "newsletters": Newsletter.objects.filter(journalist=request.user),
-    }
-    context = {
-        "articles": articles,
-        "newsletters": newsletters,
-        "page_title": "My Projects",
-        "my_projects": my_projects,
-    }
-    return render(request, 'newsapp/my_projects.html', context)
-
-
-def join_publisher(request, pk):
-    user = request.user
-    publisher = get_object_or_404(Publisher, pk=pk)
-    user.subscribed_publishers.add(publisher)
-    return redirect('newsapp:index')
-
-
-def reader_dasboard(request):
-    return render(request, 'newsapp: reader_dashboard')
-
-
-def publisher_dashboard(request):
-    return render(request, 'newsapp/publisher_dashboard')
-
-
-@login_required
 def editor_dashboard(request):
+    '''
+    View for the editor dashboard.
+
+    :param request: HTTP request object.
+    :return: Renders the editor dashboard for editor users.
+            Redirects non-editor users to the main dashboard.
+    '''
 
     if request.user.role != 'editor':
         return redirect('newsapp:dashboard')
@@ -353,6 +335,13 @@ def editor_dashboard(request):
 
 @login_required
 def journalist_dashboard(request):
+    '''
+    View for the journalist dashboard.
+
+    :param request: HTTP request object.
+    :return: Renders the journalist dashboard for journalist users.
+            Redirects non-journalist users to the main dashboard.
+    '''
     if request.user.role != 'journalist':
         return redirect('newsapp:editor_dashboard')
 
@@ -376,6 +365,12 @@ def journalist_dashboard(request):
 
 @login_required
 def reader_dashboard(request):
+    '''
+    View for the reader dashboard.
+
+    :param request: HTTP request object.
+    :return: Renders the reader dashboard for reader users.
+    '''
     user = request.user
 
     context = {
@@ -419,6 +414,13 @@ def workspace(request):
 
 @login_required
 def subscribe(request, pk):
+    '''
+    View to subscribe to an individual journalist or publisher.
+
+    :param request: HTTP request object.
+    :param pk: Primary key of the article
+    :return: Redirects to confirm_subsription.
+    '''
     if request.method != "POST":
         return HttpResponseForbidden("Invalid request method.")
 
@@ -437,6 +439,14 @@ def subscribe(request, pk):
 
 @login_required
 def confirm_subscription(request, pk):
+    '''
+    View to confirm subscription to an individual journalist or publisher.
+    Only allows readers to subsribe
+
+    :param request: HTTP request object.
+    :param pk: Primary key of the article
+    :return: Redirects to reader_subsription.
+    '''
     article = get_object_or_404(Article, pk=pk)
 
     if request.user.role != "reader":
@@ -464,6 +474,13 @@ def confirm_subscription(request, pk):
 # Unsubscribe from a journalist
 @login_required
 def unsub_to_journalist(request, pk):
+    '''
+    View to unsubscribe to an individual journalist.
+
+    :param request: HTTP request object.
+    :param pk: Primary key of the article.
+    :return: Redirects to reader_dashboard.
+    '''
     if request.method != "POST":
         return HttpResponseForbidden("Invalid request method.")
 
@@ -476,6 +493,13 @@ def unsub_to_journalist(request, pk):
 # Unsubscribe from a publisher
 @login_required
 def unsub_to_publisher(request, pk):
+    '''
+    View to unsubscribe to a publisher.
+
+    :param request: HTTP request object.
+    :param pk: Primary key of the article.
+    :return: Redirects to reader_dashboard.
+    '''
     if request.method != "POST":
         return HttpResponseForbidden("Invalid request method.")
 
@@ -487,6 +511,14 @@ def unsub_to_publisher(request, pk):
 
 @api_view(['GET'])
 def subscribed_articles(request, pk):
+    '''
+    API view to get all articles/newsletters of publishers or 
+    independent journalists that the user may be subscribed to.
+
+    :param request: HTTP request object.
+    :param pk: Primary key of the article.
+    :return: Json response.
+    '''
     user = CustomUser.objects.get(id=pk)
     publisher_articles = Article.objects.filter(publisher__in=user.subscribed_publishers.all())
     journalist_articles = Article.objects.filter(author__in=user.subscribed_journalists.all())

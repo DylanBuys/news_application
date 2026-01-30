@@ -6,9 +6,8 @@ from django.conf import settings
 from django.urls import reverse
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import PublisherForm, CollaborationInvitationForm, SendInviteForm, AcceptInviteForm
+from .forms import PublisherForm, CollaborationInvitationForm, SendInviteForm
 from .models import Publisher, CollaborationInvitation, JoinRequest
-from newsapp.models import Article, Newsletter
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -16,6 +15,13 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def create_publication(request):
+    '''
+    View to create a new publication for the logged-in user.
+
+    :param request: HTTP request object.
+    :return: Renders the publisher creation form or redirects to editor dashboard
+            if the user already owns a publication.
+    '''
     # Check if user already owns a publication
     if Publisher.objects.filter(owner=request.user).exists():
         messages.error(request, "You already own a publication. You cannot create another one.")
@@ -40,6 +46,13 @@ def create_publication(request):
 
 
 def send_invitation(request):
+    '''
+    View to send a collaboration invitation for the logged-in editor.
+
+    :param request: HTTP request object.
+    :return: Renders the invitation form or redirects to publisher dashboard
+            after a successful invitation.
+    '''
     if request.user.role != 'editor':
         return redirect('home')
 
@@ -60,6 +73,11 @@ def send_invitation(request):
 
 # Inside your CollaborationInvitation model:
 def generate_token(self):
+    '''
+    Generates a unique, secure token for the invitation if it does not already exist.
+
+    :return: 64-character secure token as a string.
+    '''
     if not self.token:
         # Generate a secure 64-character token
         self.token = secrets.token_urlsafe(48)
@@ -67,6 +85,12 @@ def generate_token(self):
 
 
 def send_invitation_email(self, request):
+    '''
+    Sends an email to the invited user with a link to accept the collaboration invitation.
+
+    :param request: HTTP request object, used to build the absolute URL.
+    :return: None. Sends an email to self.email.
+    '''
     # Construct the full URL for the user to click
     accept_url = request.build_absolute_uri(
         reverse('accept-invitation', kwargs={'token': self.token})
@@ -86,6 +110,14 @@ def send_invitation_email(self, request):
 
 @login_required
 def send_invite(request, pk):
+    '''
+    View to send a collaboration invitation for a specific publisher.
+
+    :param request: HTTP request object.
+    :param pk: Primary key of the Publisher to send invitation for.
+    :return: Renders the send invite form or redirects to editor dashboard
+            after successful invitation.
+    '''
     # Get the publisher instance
     publisher = get_object_or_404(Publisher, pk=pk)
 
@@ -111,6 +143,13 @@ def send_invite(request, pk):
 
 @login_required
 def accept_invite(request, token):
+    '''
+    View for a user to accept a collaboration invitation using a token.
+
+    :param request: HTTP request object.
+    :param token: Unique token from the invitation email.
+    :return: Redirects to journalist dashboard after accepting the invitation.
+    '''
     invite = get_object_or_404(
         CollaborationInvitation,
         token=token,
@@ -143,6 +182,13 @@ def accept_invite(request, token):
 
 @login_required
 def request_join(request):
+    '''
+    View for a user to request joining a publisher.
+
+    :param request: HTTP request object.
+    :return: Renders a list of publishers or processes join request,
+            then redirects to journalist dashboard.
+    '''
     publishers = Publisher.objects.all()
 
     if request.method == "POST":
@@ -169,6 +215,13 @@ def request_join(request):
 
 @login_required
 def join_requests(request):
+    '''
+    View for editors to manage join requests for their publisher.
+
+    :param request: HTTP request object.
+    :return: Renders a list of pending join requests, or approves/rejects
+            a request based on POST action.
+    '''
     publisher = get_object_or_404(Publisher, editors=request.user)
 
     if request.method == "POST":
@@ -219,6 +272,12 @@ def join_requests(request):
 
 @login_required
 def view_invitations(request):
+    '''
+    View to show all pending collaboration invitations for the logged-in user.
+
+    :param request: HTTP request object.
+    :return: Renders a list of pending invitations.
+    '''
     invitations = CollaborationInvitation.objects.filter(
         email=request.user.email,
         accept=False

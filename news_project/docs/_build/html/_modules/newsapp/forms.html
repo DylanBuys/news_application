@@ -70,12 +70,24 @@
              
   <h1>Source code for newsapp.forms</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span><span class="w"> </span><span class="nn">django</span><span class="w"> </span><span class="kn">import</span> <span class="n">forms</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Article</span><span class="p">,</span> <span class="n">Newsletter</span><span class="p">,</span> <span class="n">NewsletterIssue</span><span class="p">,</span> <span class="n">Comment</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Article</span><span class="p">,</span> <span class="n">Newsletter</span>
 
 
 <div class="viewcode-block" id="ArticleForm">
 <a class="viewcode-back" href="../../newsapp.html#newsapp.forms.ArticleForm">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ArticleForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Form for creating and updating Article objects.</span>
+<span class="sd">    Fields:</span>
+<span class="sd">    - title: CharField for the title.</span>
+<span class="sd">    - content: CharField for the content.</span>
+<span class="sd">    - author: CharField for the author of article.</span>
+
+<span class="sd">    Meta class:</span>
+<span class="sd">    - Defines the model to use (Article) and the fields to include in the</span>
+<span class="sd">    form.</span>
+<span class="sd">    :param forms.ModelForm: Django&#39;s ModelForm class.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
 <div class="viewcode-block" id="ArticleForm.Meta">
 <a class="viewcode-back" href="../../newsapp.html#newsapp.forms.ArticleForm.Meta">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
@@ -112,21 +124,21 @@
 
 
 
-<div class="viewcode-block" id="CommentForm">
-<a class="viewcode-back" href="../../newsapp.html#newsapp.forms.CommentForm">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">CommentForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
-<div class="viewcode-block" id="CommentForm.Meta">
-<a class="viewcode-back" href="../../newsapp.html#newsapp.forms.CommentForm.Meta">[docs]</a>
-    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">Comment</span>
-        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]</span></div>
-</div>
-
-
-
 <div class="viewcode-block" id="NewsletterForm">
 <a class="viewcode-back" href="../../newsapp.html#newsapp.forms.NewsletterForm">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NewsletterForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Form for creating and updating Newsletter objects.</span>
+<span class="sd">    Fields:</span>
+<span class="sd">    - title: CharField for the title.</span>
+<span class="sd">    - description: CharField for the content.</span>
+<span class="sd">    - subject: CharField for the author of newsletter.</span>
+
+<span class="sd">    Meta class:</span>
+<span class="sd">    - Defines the model to use (Newsletter) and the fields to include in the</span>
+<span class="sd">    form.</span>
+<span class="sd">    :param forms.ModelForm: Django&#39;s ModelForm class.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
 <div class="viewcode-block" id="NewsletterForm.Meta">
 <a class="viewcode-back" href="../../newsapp.html#newsapp.forms.NewsletterForm.Meta">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
@@ -160,24 +172,6 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="p">[</span>
                     <span class="p">(</span><span class="s2">&quot;draft&quot;</span><span class="p">,</span> <span class="s2">&quot;DRAFT&quot;</span><span class="p">),</span>
                 <span class="p">]</span></div>
-
-
-
-<div class="viewcode-block" id="NewsletterIssueForm">
-<a class="viewcode-back" href="../../newsapp.html#newsapp.forms.NewsletterIssueForm">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">NewsletterIssueForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
-<div class="viewcode-block" id="NewsletterIssueForm.Meta">
-<a class="viewcode-back" href="../../newsapp.html#newsapp.forms.NewsletterIssueForm.Meta">[docs]</a>
-    <span class="k">class</span><span class="w"> </span><span class="nc">Meta</span><span class="p">:</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">NewsletterIssue</span>
-        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;subject&#39;</span><span class="p">,</span> <span class="s1">&#39;featured_articles&#39;</span><span class="p">,</span> <span class="s1">&#39;is_draft&#39;</span><span class="p">]</span>
-
-        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="n">publisher</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;publisher&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">publisher</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s1">&#39;featured_articles&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">queryset</span> <span class="o">=</span> <span class="n">Article</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">publisher</span><span class="o">=</span><span class="n">publisher</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">Article</span><span class="o">.</span><span class="n">Status</span><span class="o">.</span><span class="n">PUBLISHED</span><span class="p">)</span></div>
-</div>
 
 </pre></div>
 
