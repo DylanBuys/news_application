@@ -1,8 +1,20 @@
 from django import forms
-from .models import Article, Newsletter, NewsletterIssue, Comment 
+from .models import Article, Newsletter
 
 
 class ArticleForm(forms.ModelForm):
+    '''
+    Form for creating and updating Article objects.
+    Fields:
+    - title: CharField for the title.
+    - content: CharField for the content.
+    - author: CharField for the author of article.
+
+    Meta class:
+    - Defines the model to use (Article) and the fields to include in the
+    form.
+    :param forms.ModelForm: Django's ModelForm class.
+    '''
     class Meta:
         model = Article
         fields = '__all__'
@@ -35,13 +47,19 @@ class ArticleForm(forms.ModelForm):
                 ]
 
 
-class CommentForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['content']
-
-
 class NewsletterForm(forms.ModelForm):
+    '''
+    Form for creating and updating Newsletter objects.
+    Fields:
+    - title: CharField for the title.
+    - description: CharField for the content.
+    - subject: CharField for the author of newsletter.
+
+    Meta class:
+    - Defines the model to use (Newsletter) and the fields to include in the
+    form.
+    :param forms.ModelForm: Django's ModelForm class.
+    '''
     class Meta:
         model = Newsletter
         fields = '__all__'
@@ -72,15 +90,3 @@ class NewsletterForm(forms.ModelForm):
                 self.fields["status"].choices = [
                     ("draft", "DRAFT"),
                 ]
-
-
-class NewsletterIssueForm(forms.ModelForm):
-    class Meta:
-        model = NewsletterIssue
-        fields = ['subject', 'featured_articles', 'is_draft']
-
-        def __init__(self, *args, **kwargs):
-            publisher = kwargs.pop('publisher', None)
-            super().__init__(*args, **kwargs)
-            if publisher:
-                self.fields['featured_articles'].queryset = Article.objects.filter(publisher=publisher, status=Article.Status.PUBLISHED)

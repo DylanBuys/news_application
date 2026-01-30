@@ -12,11 +12,24 @@ from publishers.models import Publisher
 
 
 def user_list(request):
+    '''
+    View to list all users.
+
+    :param request: HTTP request object.
+    :return: Renders a template with all CustomUser instances.
+    '''
     users = CustomUser.objects.all()
     return render(request, 'users/user_list.html', {'users': users})
 
 
 def signup(request):
+    '''
+    View to register a new user and log them in.
+
+    :param request: HTTP request object.
+    :return: Renders the signup form or redirects to role-specific dashboard
+            after successful signup.
+    '''
     if request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
@@ -46,6 +59,13 @@ def signup(request):
 
 
 def login(request):
+    '''
+    View to log in an existing user.
+
+    :param request: HTTP request object.
+    :return: Authenticates the user and redirects to their role-specific dashboard,
+            or renders login page with an error if credentials are invalid.
+    '''
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -69,40 +89,83 @@ def login(request):
 
 
 def journalist_homepage(request):
+    '''
+    View to display the journalist's homepage.
+
+    :param request: HTTP request object.
+    :return: Renders the journalist homepage template or redirects if the user is not a journalist.
+    '''
     if request.user.role != 'journalist':
         return redirect('users:journalist_homepage')
     return render(request, 'homepage_journalist.html')
 
 
 def reader_homepage(request):
+    '''
+    View to display the reader's homepage.
+
+    :param request: HTTP request object.
+    :return: Renders the reader homepage template or redirects if the user is not a reader.
+    '''
     if request.user.role != 'reader':
         return redirect('users:reader_homepage')
     return render(request, 'homepage_reader.html')
 
 
 def editor_homepage(request):
+    '''
+    View to display the editor's homepage.
+
+    :param request: HTTP request object.
+    :return: Renders the editor homepage template or redirects if the user is not an editor.
+    '''
     if request.user.role != 'editor':
         return redirect('users:editor_homepage')
     return render(request, 'editor_homepage.html')
 
 
 def logout_user(request):
+    '''
+    View to log out the current user.
+
+    :param request: HTTP request object.
+    :return: Logs out the user and redirects to the login page.
+    '''
     logout(request)
     return redirect("users:login")
 
 
 @login_required
 def profile(request):
+    '''
+    View to display the profile of the logged-in user.
+
+    :param request: HTTP request object.
+    :return: Renders the profile template with the current user.
+    '''
     return render(request, 'users/profile.html', {'user': request.user})
 
 
 @login_required
 def checkout_success(request):
+    '''
+    View to display a success page after a checkout.
+
+    :param request: HTTP request object.
+    :return: Renders the checkout success template.
+    '''
     return render(request, 'checkout_success.html')
 
 
 @login_required
 def sub_to_journalist(request, pk):
+    '''
+    View to subscribe the logged-in user to a journalist.
+
+    :param request: HTTP request object.
+    :param pk: Primary key of the journalist to subscribe to.
+    :return: Redirects to the user's profile view.
+    '''
     user = request.user
     journalist = CustomUser.objects.get(role='journalist', pk=pk)
     user.subscribed_journalists.add(journalist)
@@ -110,6 +173,13 @@ def sub_to_journalist(request, pk):
 
 
 def unsub_to_journalist(request, pk):
+    '''
+    View to unsubscribe the logged-in user from a journalist.
+
+    :param request: HTTP request object.
+    :param pk: Primary key of the journalist to unsubscribe from.
+    :return: Redirects to the user's profile view.
+    '''
     user = request.user
     journalist = get_object_or_404(CustomUser, pk=pk, role='journalist')
     user.subscribed_journalists.remove(journalist)
@@ -118,6 +188,13 @@ def unsub_to_journalist(request, pk):
 
 @login_required
 def sub_to_publisher(request, pk):
+    '''
+    View to subscribe the logged-in user to a publisher.
+
+    :param request: HTTP request object.
+    :param pk: Primary key of the publisher to subscribe to.
+    :return: Redirects to the user's profile view.
+    '''
     user = request.user
     publisher = get_object_or_404(Publisher, pk=pk)
     user.subscribed_publishers.add(publisher)
@@ -125,6 +202,13 @@ def sub_to_publisher(request, pk):
 
 
 def unsub_to_publisher(request, pk):
+    '''
+    View to unsubscribe the logged-in user from a publisher.
+
+    :param request: HTTP request object.
+    :param pk: Primary key of the publisher to unsubscribe from.
+    :return: Redirects to the user's profile view.
+    '''
     user = request.user
     publisher = get_object_or_404(Publisher, pk=pk)
     user.subscribed_publishers.remove(publisher)
@@ -133,6 +217,14 @@ def unsub_to_publisher(request, pk):
 
 @login_required
 def toggle_subscription(request, pk):
+    '''
+    View to toggle subscription status of a publisher for the logged-in user.
+
+    :param request: HTTP request object.
+    :param pk: Primary key of the publisher.
+    :return: Adds or removes the publisher from the user's subscriptions
+            and redirects to the publisher detail page.
+    '''
     publisher = get_object_or_404(Publisher, pk=pk)
     user = request.user
     
@@ -145,16 +237,42 @@ def toggle_subscription(request, pk):
 
 
 def password_reset(request):
+    '''
+    View to start the password reset process.
+
+    :param request: HTTP request object.
+    :return: Calls Django's PasswordResetView.
+    '''
     return PasswordResetView.as_view()(request)
 
 
 def password_reset_done(request):
+    '''
+    View to show password reset done page.
+
+    :param request: HTTP request object.
+    :return: Calls Django's PasswordResetDoneView.
+    '''
     return PasswordResetDoneView.as_view()(request)
 
 
 def password_reset_confirm(request, uidb64, token):
+    '''
+    View to confirm a password reset using the token.
+
+    :param request: HTTP request object.
+    :param uidb64: Encoded user ID from the password reset email.
+    :param token: Password reset token.
+    :return: Calls Django's PasswordResetConfirmView.
+    '''
     return PasswordResetConfirmView.as_view()(request, uidb64=uidb64, token=token)
 
 
 def password_reset_complete(request):
+    '''
+    View to show password reset completion page.
+
+    :param request: HTTP request object.
+    :return: Calls Django's PasswordResetCompleteView.
+    '''
     return PasswordResetCompleteView.as_view()(request)

@@ -75,68 +75,36 @@
 
 
 <span class="c1"># Create your models here.</span>
+
+
 <div class="viewcode-block" id="Article">
 <a class="viewcode-back" href="../../newsapp.html#newsapp.forms.Article">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Represents a news article within the system.</span>
-
-<span class="sd">    The Article model supports a full editorial workflow, including drafting,</span>
-<span class="sd">    review, approval, publishing, and rejection. Each article is authored by</span>
-<span class="sd">    a user and may optionally be associated with a publisher.</span>
-
-<span class="sd">    Workflow overview:</span>
-<span class="sd">    - Draft: Article is being written and is not visible to reviewers.</span>
-<span class="sd">    - Pending: Submitted for editorial review.</span>
-<span class="sd">    - Published: Approved and publicly visible.</span>
-<span class="sd">    - Rejected: Reviewed and rejected by an editor or publisher.</span>
+<span class="sd">    Model representing an Article</span>
 
 <span class="sd">    Fields:</span>
-<span class="sd">    - title (CharField):</span>
-<span class="sd">        The headline or title of the article.</span>
-<span class="sd">        Maximum length: 255 characters.</span>
+<span class="sd">    -title: charfield with a max length of 255</span>
+<span class="sd">    -content: textfield with no max limit</span>
+<span class="sd">    -status: charfield with a max length of 20, choices=draft, pending, </span>
+<span class="sd">                published, rejected, default choice=draft</span>
+<span class="sd">    -is_approved: boleanfield, default=Flase</span>
+<span class="sd">    -created_at: Dtae time field, auto_add</span>
+<span class="sd">    -updated_at: Dtae time field, auto_add</span>
 
-<span class="sd">    - content (TextField):</span>
-<span class="sd">        The full body text of the article.</span>
-
-<span class="sd">    - status (CharField):</span>
-<span class="sd">        Represents the current workflow state of the article.</span>
-<span class="sd">        Choices are defined in the Status enum:</span>
-<span class="sd">            - draft</span>
-<span class="sd">            - pending</span>
-<span class="sd">            - published</span>
-<span class="sd">            - rejected</span>
-<span class="sd">        Default is &#39;draft&#39;.</span>
-
-<span class="sd">    - is_approved (BooleanField):</span>
-<span class="sd">        Indicates whether the article has been approved by an editor or publisher.</span>
-<span class="sd">        This is typically set to True only when status is &#39;published&#39;.</span>
-
-<span class="sd">    - author (ForeignKey → CustomUser):</span>
-<span class="sd">        The user who created the article.</span>
-<span class="sd">        Deleting the author will delete all related articles.</span>
-<span class="sd">        Reverse relation: user.articles</span>
-
-<span class="sd">    - publisher (ForeignKey → publishers.Publisher, optional):</span>
-<span class="sd">        The publisher associated with the article.</span>
-<span class="sd">        This field is optional to allow independent journalists.</span>
-<span class="sd">        Reverse relation: publisher.articles</span>
-
-<span class="sd">    - created_at (DateTimeField):</span>
-<span class="sd">        Timestamp when the article was first created.</span>
-<span class="sd">        Automatically set on creation.</span>
-
-<span class="sd">    - updated_at (DateTimeField):</span>
-<span class="sd">        Timestamp when the article was last updated.</span>
-<span class="sd">        Automatically updated on each save.</span>
-
+<span class="sd">    Relationships:</span>
+<span class="sd">    -author: </span>
+<span class="sd">    -publisher</span>
 <span class="sd">    Methods:</span>
-<span class="sd">    - __str__():</span>
-<span class="sd">        Returns the article title for human-readable representations.</span>
+<span class="sd">    __str__: Returns a string representation of the article, showing</span>
+<span class="sd">    the title</span>
+
+<span class="sd">    :param models.Model: Django&#39;s base model class.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 <div class="viewcode-block" id="Article.Status">
 <a class="viewcode-back" href="../../newsapp.html#newsapp.forms.Article.Status">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">Status</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">TextChoices</span><span class="p">):</span>
+    
         <span class="n">DRAFT</span> <span class="o">=</span> <span class="s1">&#39;draft&#39;</span><span class="p">,</span> <span class="s1">&#39;Draft&#39;</span>
         <span class="n">PENDING</span> <span class="o">=</span> <span class="s1">&#39;pending&#39;</span><span class="p">,</span> <span class="s1">&#39;Pending Review&#39;</span>
         <span class="n">PUBLISHED</span> <span class="o">=</span> <span class="s1">&#39;published&#39;</span><span class="p">,</span> <span class="s1">&#39;Published&#39;</span>
@@ -159,6 +127,29 @@
 <div class="viewcode-block" id="Newsletter">
 <a class="viewcode-back" href="../../newsapp.html#newsapp.forms.Newsletter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Newsletter</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Model representing an Article</span>
+
+<span class="sd">    Fields:</span>
+<span class="sd">    -title: charfield with a max length of 255</span>
+<span class="sd">    -description: textfield with no max length</span>
+<span class="sd">    -subject: textfield with no max limit</span>
+<span class="sd">    -status: charfield with a max length of 20, choices=draft, pending, </span>
+<span class="sd">                published, rejected, default choice=draft</span>
+<span class="sd">    -is_approved: boleanfield, default=Flase</span>
+<span class="sd">    -created_at: Dtae time field, auto_add</span>
+<span class="sd">    -updated_at: Dtae time field, auto_add</span>
+<span class="sd">    -is_active: booleanfield, default=True</span>
+
+<span class="sd">    Relationships:</span>
+<span class="sd">    -author</span>
+<span class="sd">    -publisher</span>
+<span class="sd">    Methods:</span>
+<span class="sd">    __str__: Returns a string representation of the article, showing</span>
+<span class="sd">    the title</span>
+
+<span class="sd">    :param models.Model: Django&#39;s base model class.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
 <div class="viewcode-block" id="Newsletter.Status">
 <a class="viewcode-back" href="../../newsapp.html#newsapp.forms.Newsletter.Status">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">Status</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">TextChoices</span><span class="p">):</span>
@@ -186,36 +177,6 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2"> by </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">publisher</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span></div>
-
-
-
-<div class="viewcode-block" id="NewsletterIssue">
-<a class="viewcode-back" href="../../newsapp.html#newsapp.forms.NewsletterIssue">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">NewsletterIssue</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-    <span class="n">newsletter</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Newsletter</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;issues&#39;</span><span class="p">)</span>
-    <span class="n">subject</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
-    <span class="n">featured_articles</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Article</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;newsletter_issues&#39;</span><span class="p">)</span>
-    <span class="n">sent_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">is_draft</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Issue of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">newsletter</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="si">}</span><span class="s2">&quot;</span></div>
-
-
-
-<div class="viewcode-block" id="Comment">
-<a class="viewcode-back" href="../../newsapp.html#newsapp.forms.Comment">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Comment</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-    <span class="n">article</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Article</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;comments&#39;</span><span class="p">)</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">AUTH_USER_MODEL</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;comments&#39;</span><span class="p">)</span>
-    <span class="n">content</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
-
-    <span class="c1"># replies to other comments</span>
-    <span class="n">parent_comment</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;self&#39;</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;replies&#39;</span><span class="p">)</span>
-    <span class="n">created_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Comment by </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 </pre></div>
 

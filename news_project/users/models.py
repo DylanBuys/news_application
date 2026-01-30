@@ -3,6 +3,16 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 
 
 class CustomUser(AbstractUser):
+    '''
+    Custom user model extending Django's AbstractUser with role-based fields.
+
+    :param role: User role, one of 'reader', 'journalist', 'editor', or 'admin'.
+    :param subscribed_publishers: Publishers the user is subscribed to (readers only).
+    :param subscribed_journalists: Journalists the user follows (readers only).
+    :param independent_articles: Articles authored independently by the user (journalists only).
+    :param independent_newsletters: Newsletters authored independently by the user (journalists only).
+    :param publisher_group: Optional group the user belongs to within a publisher.
+    '''
     ROLE_CHOICES = (
         ('reader', 'Reader'),
         ('journalist', 'Journalist'),

@@ -5,8 +5,31 @@ from django.conf import settings
 
 # Create your models here.
 
+
 class Article(models.Model):
+    '''
+    Model representing an Article
+
+    Fields:
+    -title: charfield with a max length of 255
+    -content: textfield with no max limit
+    -status: charfield with a max length of 20, choices=draft, pending, 
+                published, rejected, default choice=draft
+    -is_approved: boleanfield, default=Flase
+    -created_at: Dtae time field, auto_add
+    -updated_at: Dtae time field, auto_add
+
+    Relationships:
+    -author: 
+    -publisher
+    Methods:
+    __str__: Returns a string representation of the article, showing
+    the title
+
+    :param models.Model: Django's base model class.
+    '''
     class Status(models.TextChoices):
+    
         DRAFT = 'draft', 'Draft'
         PENDING = 'pending', 'Pending Review'
         PUBLISHED = 'published', 'Published'
@@ -25,6 +48,29 @@ class Article(models.Model):
 
 
 class Newsletter(models.Model):
+    '''
+    Model representing an Article
+
+    Fields:
+    -title: charfield with a max length of 255
+    -description: textfield with no max length
+    -subject: textfield with no max limit
+    -status: charfield with a max length of 20, choices=draft, pending, 
+                published, rejected, default choice=draft
+    -is_approved: boleanfield, default=Flase
+    -created_at: Dtae time field, auto_add
+    -updated_at: Dtae time field, auto_add
+    -is_active: booleanfield, default=True
+
+    Relationships:
+    -author
+    -publisher
+    Methods:
+    __str__: Returns a string representation of the article, showing
+    the title
+
+    :param models.Model: Django's base model class.
+    '''
     class Status(models.TextChoices):
         DRAFT = 'draft', 'Draft'
         PENDING = 'pending', 'Pending Review'
@@ -49,27 +95,3 @@ class Newsletter(models.Model):
 
     def __str__(self):
         return f"{self.title} by {self.publisher.name}"
-
-
-class NewsletterIssue(models.Model):
-    newsletter = models.ForeignKey(Newsletter, on_delete=models.CASCADE, related_name='issues')
-    subject = models.CharField(max_length=255)
-    featured_articles = models.ManyToManyField(Article, related_name='newsletter_issues')
-    sent_at = models.DateTimeField(null=True, blank=True)
-    is_draft = models.BooleanField(default=True)
-
-    def __str__(self):
-        return f"Issue of {self.newsletter.title} - {self.subject}"
-
-
-class Comment(models.Model):
-    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments')
-    content = models.TextField()
-
-    # replies to other comments
-    parent_comment = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Comment by {self.user.username} on {self.article.title}"

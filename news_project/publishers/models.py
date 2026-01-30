@@ -1,10 +1,17 @@
 from django.db import models
 from django.conf import settings
 from users.models import CustomUser
-from django.db.models.fields.related import ForeignKey
 
 
 class Publisher(models.Model):
+    '''
+    Model representing a publisher entity.
+
+    :param name: Name of the publisher.
+    :param description: Optional description of the publisher.
+    :param owner: User who owns this publisher (one-to-one relationship).
+    :param members: Users who are members of this publisher.
+    '''
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
 
@@ -29,10 +36,22 @@ class Publisher(models.Model):
 
 
 class PublisherGroup(models.Model):
+    '''
+    Model representing a grouping of staff members for a publisher.
+
+    :param publisher: Related Publisher instance.
+    '''
     publisher = models.ForeignKey('publishers.Publisher', null=True, blank=True, on_delete=models.SET_NULL, related_name='staff_members')
 
 
 class PublisherMember(models.Model):
+    '''
+    Intermediate model representing a user’s membership in a publisher.
+
+    :param user: User who is a member of the publisher.
+    :param publisher: Publisher the user belongs to.
+    :param date_joined: Date and time when the user joined the publisher.
+    '''
     """ Intermediate model to store extra info about the membership (like roles) """
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE)
@@ -40,6 +59,16 @@ class PublisherMember(models.Model):
 
 
 class CollaborationInvitation(models.Model):
+    '''
+    Model representing an invitation to collaborate with a publisher.
+
+    :param email: Email address of the invited user.
+    :param publisher: Publisher issuing the invitation.
+    :param role: Role assigned to the invited user.
+    :param token: Unique token used to validate the invitation.
+    :param created_at: Timestamp when the invitation was created.
+    :param accept: Indicates whether the invitation has been accepted.
+    '''
     email = models.EmailField()
     publisher = models.ForeignKey('publishers.Publisher', on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=CustomUser.ROLE_CHOICES)
@@ -53,6 +82,14 @@ class CollaborationInvitation(models.Model):
 
 # publishers/models.py
 class JoinRequest(models.Model):
+    '''
+    Model representing a request by a user to join a publisher.
+
+    :param user: User requesting to join.
+    :param publisher: Publisher the user wants to join.
+    :param created_at: Timestamp when the request was created.
+    :param approved: Indicates whether the request has been approved.
+    '''
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE
