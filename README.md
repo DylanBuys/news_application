@@ -29,11 +29,17 @@ Windows (PowerShell / CMD):
 docker run -p 8000:8000 --name newsapp_container newsapp
 Access the application at http://localhost:8000
 
+Perform migrations inside running container
+docker exec newsapp_container sh
+python manage.py migrate
+
 Stop and Remove the Container
 Stop the running container:
 docker stop newsapp_container
 Remove the container:
 docker rm newsapp_container
+To find containers with no names:
+docker ps
 
 Rebuild the Image After Changes
 If you make changes to the code, rebuild the image:
