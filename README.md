@@ -25,7 +25,9 @@ This project is containerized using **Docker**, so you don’t need to install P
 ```sh
              docker run -p 8000:8000 --name newsapp_container newsapp
 ```
-    Access the application at http://localhost:8000
+
+Access the application at http://localhost:8000
+
 
 ## 4. Perform migrations inside running container
 ```sh
