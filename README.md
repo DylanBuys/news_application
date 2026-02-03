@@ -34,6 +34,8 @@ Access the application at http://localhost:8000
 ## 4. Perform migrations inside running container
 ```sh
             docker exec newsapp_container sh
+```
+```sh
             python manage.py migrate
 ```
 
