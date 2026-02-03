@@ -11,12 +11,14 @@ This project is containerized using **Docker**, so you don’t need to install P
 
 ```sh
         git clone https://github.com/DylanBuys/news_application
-        cd news_application/news_project
+```
+```sh
+         cd news_application/news_project
 ```
 
 
 ## 2. Build the Docker Image
-    Make sure you are in the project root folder.
+Make sure you are in the project root folder.
 ```sh
                docker build -t newsapp .
 ```
