@@ -17,34 +17,34 @@ This project is containerized using **Docker**, so you don’t need to install P
 
 ## 2. Build the Docker Image
     Make sure you are in the project root folder.
-       ```sh
+```sh
                docker build -t newsapp .
-       ```
+```
 
 ## 3. Run the Docker Container
-       ```sh
+```sh
              docker run -p 8000:8000 --name newsapp_container newsapp
-       ```
+```
     Access the application at http://localhost:8000
 
 ## 4. Perform migrations inside running container
-       ```sh
+```sh
             docker exec newsapp_container sh
             python manage.py migrate
-       ```
+```
 
 ### Stop the running container:
-    ```sh
+```sh
         docker stop newsapp_container
-    ```
+```
 ### Remove the container:
-    ```sh
+```sh
          docker rm newsapp_container
-    ```
+```
 ### To find containers with no names:
-    ```sh
+```sh
          docker ps
-    ```
+```
 
 
 Notes
