@@ -7,7 +7,7 @@ This project is containerized using **Docker**, so you don’t need to install P
 ## Prerequisites
 
 - Install [Docker Desktop](https://www.docker.com/products/docker-desktop) (for Mac, Linux, or Windows)
-- Clone this repository:
+## 1. Clone this repository:
 
 ```sh
         git clone https://github.com/DylanBuys/news_application
@@ -15,19 +15,19 @@ This project is containerized using **Docker**, so you don’t need to install P
 ```
 
 
-## 1. Build the Docker Image
+## 2. Build the Docker Image
     Make sure you are in the project root folder.
        ```sh
                docker build -t newsapp .
        ```
 
-## 2. Run the Docker Container
+## 3. Run the Docker Container
        ```sh
              docker run -p 8000:8000 --name newsapp_container newsapp
        ```
     Access the application at http://localhost:8000
 
-## 3. Perform migrations inside running container
+## 4. Perform migrations inside running container
        ```sh
             docker exec newsapp_container sh
             python manage.py migrate
